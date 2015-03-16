@@ -1,0 +1,20 @@
+<resources>
+    <string name="app_name">FlashBoard</string>
+
+
+    <string name="title_section1">Section 1</string>
+    <string name="title_section2">Section 2</string>
+    <string name="title_section3">Section 3</string>
+
+    <string name="hello_world">Hello world!</string>
+
+    <string name="action_settings">Settings</string>
+
+    <!-- Beginning Flashboard strings -->
+    <string-array name="subjects_array">
+        <item>Intro Stats</item>
+        <item>Physics II</item>
+        <item>Algorithms</item>
+        <item>Data Structures</item>
+    </string-array>
+</resources>
