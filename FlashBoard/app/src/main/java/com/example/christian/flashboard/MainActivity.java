@@ -37,6 +37,9 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
      * The {@link ViewPager} that will host the section contents.
      */
     ViewPager mViewPager;
+    
+    // SQLite Database setup
+    
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -158,7 +161,8 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
     }
 
     /**
-     * A placeholder fragment containing a simple view.
+     * A placeholder fragment containing a simple view. "Review" Fragment
+     * Contains dropdown menu (spinner) to choose subject, start checkbox, and start button
      */
     public static class PlaceholderFragment extends Fragment {
         /**
@@ -191,6 +195,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
             Spinner spinner = (Spinner) rootView.findViewById(R.id.subject_spinner);
             // Create an ArrayAdapter using the string array and a default spinner layout
             ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
+                                            //TODO: Does this array exist???
                     getActivity().getBaseContext(), R.array.subjects_array,
                     android.R.layout.simple_spinner_item);
 
@@ -202,6 +207,10 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         }
     }
 
+    /**
+     * Fragment for adding new cards
+     * Contains subject spinner, new subject button, two edittexts (Q/A), and create button
+    **/
     public static class PlaceholderFragment2 extends Fragment {
         /**
          * The fragment argument representing the section number for this
@@ -229,7 +238,11 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_create, container, false);
 
-
+            //Get Views
+            Button createButton = (Button) rootView.findViewById(R.id.button_start);
+            EditText questionEditText = (EditText) rootView.findViewById(R.id.editText_question);
+            EditText answerEditText = (EditText) rootView.findViewById(R.id.editText_answer);
+            
             Spinner spinner = (Spinner) rootView.findViewById(R.id.spinner_choose_subject);
             // Create an ArrayAdapter using the string array and a default spinner layout
             ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
@@ -239,6 +252,30 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
             // Specify the layout to use when the list of choices appears
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             spinner.setAdapter(adapter); // Apply the adapter to the spinner
+            
+            //Get text fields for inserting card
+            String questionText = questionEditText.getText().toString();
+            String answerText = answerEditText.getText().toString();
+            final String subject;   // this won't work but I don't feel like figuring out the workaround
+            //like actually, you can only call final things inside the listener, but you can't modify them??? bc final?
+            spinner.setOnItemSelectedListener(new onItemSelectedListener() {
+                public void onItemSelected(AdapterView<CharSequence> parent, View view, int pos, long id) {
+                    // An item was selected. You can retrieve the selected item using
+                    // parent.getItemAtPosition(pos)
+                    subject = parent.getItemAtPosition(pos).toString(); //lol idk if this will work
+                }
+                public void onNothingSelected(AdapterView<CharSequence> parent) {
+                    // Another interface callback
+                }
+            });
+            
+            //Anyway, now assuming we have all the strings, create a card
+            createButton.setOnClickListener(new onClickListener() {
+                public boolean onClick(View v) {
+                    //On click, add new card to database
+                    
+                }
+            });
 
             return rootView;
         }
