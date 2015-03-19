@@ -13,29 +13,39 @@
     <Spinner
         android:layout_width="300dp"
         android:layout_height="70dp"
-        android:id="@+id/subject_spinner"
+        android:id="@+id/spinner_choose_subject"
         android:background="#9f9f9f"
         android:popupBackground="#9f9f9f"
         android:layout_centerHorizontal="true" />
 
-    <CheckBox
-        android:layout_width="200dp"
-        android:layout_height="50dp"
-        android:text="@string/checkbox_randomize"
-        android:textSize="30dp"
-        android:id="@+id/checkbox_randomize"
-        android:layout_below="@+id/subject_spinner"
+    <EditText
+        android:layout_width="300dp"
+        android:layout_height="100dp"
+        android:inputType="textMultiLine"
+        android:ems="10"
+        android:id="@+id/editText_question"
+        android:layout_below="@+id/spinner_choose_subject"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="52dp" />
+        android:hint="@string/editText_question"/>
+    <EditText
+        android:layout_width="300dp"
+        android:layout_height="100dp"
+        android:inputType="textMultiLine"
+        android:ems="10"
+        android:id="@+id/editText_answer"
+        android:layout_below="@+id/editText_question"
+        android:layout_centerHorizontal="true"
+        android:hint="@string/editText_answer"/>
 
     <Button
         android:layout_width="300dp"
         android:layout_height="150dp"
-        android:text="@string/button_start"
+        android:text="@string/button_insert"
         android:id="@+id/button_start"
-        android:layout_below="@+id/checkbox_randomize"
+        android:layout_below="@+id/editText_answer"
         android:layout_marginTop="50dp"
         android:layout_centerHorizontal="true"
         android:textSize="50dp"/>
+
 
 </RelativeLayout>
