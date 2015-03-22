@@ -1,0 +1,156 @@
+package com.example.caroline.cevallos_assignment1;
+
+        import android.content.ContentValues;
+        import android.content.Context;
+        import android.database.Cursor;
+        import android.database.SQLException;
+        import android.database.sqlite.SQLiteDatabase;
+        import android.database.sqlite.SQLiteException;
+        import android.database.sqlite.SQLiteOpenHelper;
+        import android.database.sqlite.SQLiteDatabase.CursorFactory;
+        import android.util.Log;
+
+public class CardDBAdapter {
+
+    private SQLiteDatabase db;
+    private CardDBHelper dbHelper;
+    private final Context context;
+
+    private static final String DB_NAME = "card.db";
+    private static final int DB_VERSION = 1;  // when you add or delete fields, you must update the version number!
+
+    private static final String CARD_TABLE = "card";
+    public static final String CARD_ID = "card_id";   // column 0
+    public static final String CARD_SUB = "card_sub";
+    public static final String CARD_QUES = "card_ques";
+    public static final String CARD_ANS = "card_ans";
+    public static final String[] CARD_COLS = {CARD_ID, CARD_SUB, CARD_QUES, CARD_ANS};
+
+    public CardDBAdapter(Context ctx) {
+        context = ctx;
+        dbHelper = new CardDBHelper(context, DB_NAME, null, DB_VERSION);
+    }
+
+    public void open() throws SQLiteException {
+        try {
+            db = dbHelper.getWritableDatabase();
+        } catch (SQLiteException ex) {
+            db = dbHelper.getReadableDatabase();
+        }
+    }
+
+    public void close() {
+        db.close();
+    }
+
+    // database update methods
+
+    public long insertCard(String subject, String question, String answer) {
+        // create a new row of values to insert
+        ContentValues cvalues = new ContentValues();
+        // assign values for each col
+        cvalues.put(CARD_SUB, subject);
+        cvalues.put(CARD_QUES, question);
+        cvalues.put(CARD_ANS, answer);
+        // add to course table in database
+        return db.insert(CARD_TABLE, null, cvalues);
+    }
+
+    public boolean removeCourse(long ri) {
+        return db.delete(CARD_TABLE, CARD_ID+"="+ri, null) > 0;
+    }
+
+    public void deleteCourses() {
+        db.delete(CARD_TABLE, null, null);
+        //  db.execSQL("DROP TABLE IF EXISTS " + COURSE_TABLE);
+    }
+
+    public boolean updateSub(long ri, String gr) {
+        ContentValues cvalue = new ContentValues();
+        cvalue.put(CARD_SUB, gr);
+        return db.update(CARD_TABLE, cvalue, CARD_ID+"="+ri, null) > 0;
+    }
+
+    public boolean updateQues(long ri, String gr) {
+        ContentValues cvalue = new ContentValues();
+        cvalue.put(CARD_QUES, gr);
+        return db.update(CARD_TABLE, cvalue, CARD_ID+"="+ri, null) > 0;
+    }
+
+    public boolean updateAns(long ri, String gr) {
+        ContentValues cvalue = new ContentValues();
+        cvalue.put(CARD_ANS, gr);
+        return db.update(CARD_TABLE, cvalue, CARD_ID+"="+ri, null) > 0;
+    }
+
+    // database query methods
+    public Cursor getAllCourses() {
+        return db.query(CARD_TABLE, CARD_COLS, null, null, null, null, null);
+    }
+
+    public Cursor getCourseCursor(long ri) throws SQLException {
+        Cursor result = db.query(true, CARD_TABLE, CARD_COLS, CARD_ID+"="+ri, null, null, null, null, null);
+        if ((result.getCount() == 0) || !result.moveToFirst()) {
+            throw new SQLException("No course items found for row: " + ri);
+        }
+        return result;
+    }
+
+    public String getSubject(long ri) throws SQLException {
+        Cursor cursor = db.query(true, CARD_TABLE, CARD_COLS, CARD_ID+"="+ri, null, null, null, null, null);
+        if ((cursor.getCount() == 0) || !cursor.moveToFirst()) {
+            throw new SQLException("No course items found for row: " + ri);
+        }
+        // must use column indices to get column values
+        int subIndex = cursor.getColumnIndex(CARD_SUB);
+        return cursor.getString(subIndex);
+    }
+
+    public String getQuestion(long ri) throws SQLException {
+        Cursor cursor = db.query(true, CARD_TABLE, CARD_COLS, CARD_ID+"="+ri, null, null, null, null, null);
+        if ((cursor.getCount() == 0) || !cursor.moveToFirst()) {
+            throw new SQLException("No course items found for row: " + ri);
+        }
+        // must use column indices to get column values
+        int quesIndex = cursor.getColumnIndex(CARD_QUES);
+        return cursor.getString(quesIndex);
+    }
+
+    public String getAnswer(long ri) throws SQLException {
+        Cursor cursor = db.query(true, CARD_TABLE, CARD_COLS, CARD_ID+"="+ri, null, null, null, null, null);
+        if ((cursor.getCount() == 0) || !cursor.moveToFirst()) {
+            throw new SQLException("No course items found for row: " + ri);
+        }
+        // must use column indices to get column values
+        int ansIndex = cursor.getColumnIndex(CARD_ANS);
+        return cursor.getString(ansIndex);
+    }
+
+    private static class CardDBHelper extends SQLiteOpenHelper {
+
+        // SQL statement to create a new database table
+        private static final String DB_CREATE = "CREATE TABLE " + CARD_TABLE
+                + " (" + CARD_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + CARD_SUB + " TEXT,"
+                + CARD_QUES + " TEXT, " + CARD_ANS + " REAL," + " TEXT);";
+
+        public CardDBHelper(Context context, String name, CursorFactory fct, int version) {
+            super(context, name, fct, version);
+        }
+
+        @Override
+        public void onCreate(SQLiteDatabase adb) {
+            adb.execSQL(DB_CREATE);
+        }
+
+        @Override
+        public void onUpgrade(SQLiteDatabase adb, int oldVersion, int newVersion) {
+            Log.w("GPAdb", "upgrading from version " + oldVersion + " to "
+                    + newVersion + ", destroying old data");
+            // drop old table if it exists, create new one
+            // better to migrate existing data into new table
+            adb.execSQL("DROP TABLE IF EXISTS " + CARD_TABLE);
+            onCreate(adb);
+        }
+    }
+
+}
